@@ -1,4 +1,3 @@
-import shutil
 from config import Config
 import tensorflow as tf
 

@@ -1,4 +1,3 @@
-import shutil
 import tensorflow as tf
 import keras
 from config import Config
@@ -66,13 +65,20 @@ class TrainHandler:
             loss = tf.losses.MeanSquaredError()
 
         optimizer_name = self.conf.get_optimizer()
-        if optimizer_name == 'adam':
-            optimizer = tf.keras.optimizers.Adam(learning_rate=0.00003)
-        else:
-            optimizer = tf.keras.optimizers.SGD(learning_rate=0.001)
+        learning_rate = self.conf.get_learning_rate()
         epochs = self.conf.get_num_epochs()
         
         for epoch in range(epochs):
+            if type(learning_rate) is list:
+                current_learning_rate = min(learning_rate) + epoch * (max(learning_rate) - min(learning_rate))
+            else:
+                current_learning_rate = learning_rate
+
+            if optimizer_name == 'adam':
+                optimizer = tf.keras.optimizers.Adam(learning_rate=current_learning_rate)
+            else:
+                optimizer = tf.keras.optimizers.SGD(learning_rate=current_learning_rate)
+
             print("epoch: ", epoch+1, '/', epochs)
             if epoch > 0:
                 self.model.load_weights('./model.h5')

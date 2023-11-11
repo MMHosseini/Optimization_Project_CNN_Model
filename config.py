@@ -1,4 +1,3 @@
-import shutil
 import os
 
 
@@ -16,6 +15,9 @@ class Config:
         self.optimizer = 'adam'  # 'sgd' or 'adam'
         self.epoch = 10  # 10, 20, 100
         self.batch_size = 48  # 32, 48, 16
+        self.learning_rate_type = 'constant'  # 'constant', 'dynamic'
+        self.constant_learning_rate = 0.0003  # 0.0003 for ADAM, 0.001 for SGD
+        self.dynamic_learning_rate = [0.003, 0.00003]  # [0.003, 0.00003] for ADAM, [0.01, 0.0001] for SGD
 
     def get_code_address(self):
         return self.code_address
@@ -56,3 +58,9 @@ class Config:
 
     def get_pooling(self):
         return self.pooling
+
+    def get_learning_rate(self):
+        if self.learning_rate_type == 'constant':
+            return self.constant_learning_rate
+        elif self.learning_rate_type == 'dynamic':
+            return self.dynamic_learning_rate

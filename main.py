@@ -1,4 +1,3 @@
-import shutil
 from data_handler import DataHandler
 from config import Config
 from train_handler import TrainHandler
