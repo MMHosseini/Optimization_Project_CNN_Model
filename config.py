@@ -5,19 +5,17 @@ class Config:
     def __init__(self):
         self.code_address = os.getcwd() + '/'
         self.dataset_address = self.code_address + 'Dataset/'
-        self.dataset_name = 'cifar'  # 'caltech' or 'cifar'
-        self.train_ratio = 0.9  # 0.7, 0.9
+        self.dataset_name = 'caltech'  # 'caltech' or 'cifar'
+        self.train_ratio = 0.7  # 0.7, 0.9
 
         self.conv_properties = [(64, 3, 'relu'), (128, 3, 'relu'), (64, 3, 'relu')]  # you can add/remove conv layers
         self.dense_properties = [(256, 'relu')]  # you can add more dense layers
         self.pooling = 'max'  # 'max' or 'avg'
         self.loss = 'sparse_categorical_crossentropy'  # 'mse', 'sparse_categorical_crossentropy', 'hinge'
         self.optimizer = 'adam'  # 'sgd' or 'adam'
-        self.epoch = 10  # 10, 20, 100
-        self.batch_size = 48  # 32, 48, 16
-        self.learning_rate_type = 'constant'  # 'constant', 'dynamic'
-        self.constant_learning_rate = 0.0003  # 0.0003 for ADAM, 0.001 for SGD
-        self.dynamic_learning_rate = [0.003, 0.00003]  # [0.003, 0.00003] for ADAM, [0.01, 0.0001] for SGD
+        self.epoch = 20  # 10, 20, 100
+        self.batch_size = 16  # 32, 48, 16
+        self.learning_rate = 0.0003  # 0.0003 for ADAM, 0.001 for SGD
 
     def get_code_address(self):
         return self.code_address
@@ -31,7 +29,7 @@ class Config:
     def get_image_size(self):
         if self.get_dataset_name() == 'caltech':
             image_size = 256
-        else:
+        elif self.get_dataset_name() == 'cifar':
             image_size = 32
         return image_size
 
@@ -60,7 +58,4 @@ class Config:
         return self.pooling
 
     def get_learning_rate(self):
-        if self.learning_rate_type == 'constant':
-            return self.constant_learning_rate
-        elif self.learning_rate_type == 'dynamic':
-            return self.dynamic_learning_rate
+        return self.learning_rate

@@ -1,6 +1,7 @@
 import tensorflow as tf
 import keras
 from config import Config
+import numpy as np
 
 
 class TrainHandler:
@@ -18,7 +19,7 @@ class TrainHandler:
         layers = []
         input_layer = keras.Input(shape=(image_size, image_size, 3))
         layers.append(input_layer)
-        rescaling = keras.layers.Rescaling(1./255)
+        rescaling = keras.layers.Rescaling(1. / 255)
         layers.append(rescaling)
 
         for tuple in conv_list:
@@ -56,38 +57,26 @@ class TrainHandler:
         elif loss_name == 'sparse_categorical_crossentropy':
             loss = tf.losses.SparseCategoricalCrossentropy()
         elif loss_name == 'hinge':
-            loss = tf.losses.Hinge()
+            loss = tf.keras.losses.CategoricalHinge()
         elif loss_name == 'Huber':
             loss = tf.losses.Huber()
         elif loss_name == 'KLD':
             loss = tf.losses.KLDivergence()
         else:
-            loss = tf.losses.MeanSquaredError()
+            loss = tf.losses.CategoricalCrossentropy()
 
         optimizer_name = self.conf.get_optimizer()
         learning_rate = self.conf.get_learning_rate()
         epochs = self.conf.get_num_epochs()
-        
-        for epoch in range(epochs):
-            if type(learning_rate) is list:
-                current_learning_rate = min(learning_rate) + epoch * (max(learning_rate) - min(learning_rate))
-            else:
-                current_learning_rate = learning_rate
 
+        for epoch in range(epochs):
+            current_learning_rate = learning_rate
             if optimizer_name == 'adam':
                 optimizer = tf.keras.optimizers.Adam(learning_rate=current_learning_rate)
             else:
                 optimizer = tf.keras.optimizers.SGD(learning_rate=current_learning_rate)
-
-            print("epoch: ", epoch+1, '/', epochs)
-            if epoch > 0:
-                self.model.load_weights('./model.h5')
+            print("epoch: ", epoch + 1, '/', epochs)
             self.model.compile(loss=loss, optimizer=optimizer, metrics=['accuracy'])
             self.model.fit(train_set, epochs=1)
-            self.model.save_weights('./model.h5')
             test_loss, test_acc = self.model.evaluate(test_set)
             print('test_Loss:', test_loss, ', test_Acc:', test_acc)
-
-
-
-
